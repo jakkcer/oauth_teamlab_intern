@@ -1,6 +1,5 @@
 package com.example.userAuthAPI.config;
 
-import com.example.userAuthAPI.config.SecurityConstants;
 import com.example.userAuthAPI.support.JWTAuthenticationFilter;
 import com.example.userAuthAPI.support.JWTAuthorizationFilter;
 

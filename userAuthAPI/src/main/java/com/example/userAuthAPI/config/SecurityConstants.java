@@ -1,15 +1,11 @@
 package com.example.userAuthAPI.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-import lombok.Data;
-
-@Component
-@Data
-@ConfigurationProperties(prefix = "constant.security")
 public class SecurityConstants {
-	private String secret;
-	private long expirationTime;
-	private String tokenPrefix;
-    private String headerString;
+
+	public static final String SECRET = "userauthapisecret";
+	public static final long EXPIRATION_TIME = 2880000;
+	public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
+    public static final String LOGIN_ID = "name";
+    public static final String PASSWORD = "password";
 }

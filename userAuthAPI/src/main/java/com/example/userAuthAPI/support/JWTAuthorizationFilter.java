@@ -1,11 +1,7 @@
 package com.example.userAuthAPI.support;
 
-import com.example.userAuthAPI.config.SecurityConstants;
-
 import io.jsonwebtoken.Jwts;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,30 +14,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.example.userAuthAPI.config.SecurityConstants.*;
+
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	
-	@Autowired
-	private SecurityConstants prop;
-	
-//	@Value("${constant.security.headerString}")
-//	private String headerString; 
-
 	private AuthenticationManager authenticationManager;
 	
 	public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
 		super(authenticationManager);
-		this.authenticationManager = authenticationManager;
 	}
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest req,
 									HttpServletResponse res,
 									FilterChain chain) throws IOException, ServletException {
-		String headerString = obtainHeaderString();
-		System.out.println(headerString);
-		String header = req.getHeader(headerString);
+		String header = req.getHeader(HEADER_STRING);
 		
-		if (header == null || !header.startsWith(prop.getTokenPrefix())) {
+		if (header == null || !header.startsWith(TOKEN_PREFIX)) {
 			chain.doFilter(req, res);
 			return;
 		}
@@ -53,11 +42,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	}
 
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-		String token = request.getHeader(prop.getHeaderString());
+		String token = request.getHeader(HEADER_STRING);
 		if (token != null) {
 			String user = Jwts.parser()
-					.setSigningKey(prop.getSecret().getBytes())
-					.parseClaimsJws(token.replace(prop.getTokenPrefix(), ""))
+					.setSigningKey(SECRET.getBytes())
+					.parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
 					.getBody()
 					.getSubject();
 			
@@ -69,7 +58,4 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		return null;
 	}
 	
-	protected String obtainHeaderString() {
-		return this.prop.getHeaderString();
-	}
 }

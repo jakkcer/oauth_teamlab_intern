@@ -1,7 +1,6 @@
 package com.example.userAuthAPI.support;
 
 import com.example.userAuthAPI.model.UserObject;
-import com.example.userAuthAPI.config.SecurityConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -24,11 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static com.example.userAuthAPI.config.Mappings.LOGIN_URL;
+import static com.example.userAuthAPI.config.SecurityConstants.*;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-	private SecurityConstants prop;
-	
 	private AuthenticationManager authenticationManager;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
@@ -38,8 +36,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(LOGIN_URL, "POST"));
 		
-		setUsernameParameter("user");
-		setPasswordParameter("password");
+		setUsernameParameter(LOGIN_ID);
+		setPasswordParameter(PASSWORD);
 		setFilterProcessesUrl(LOGIN_URL);
 	}
 	
@@ -69,9 +67,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 											Authentication auth) throws IOException, ServletException {
 		String token = Jwts.builder()
 				.setSubject(((User)auth.getPrincipal()).getUsername())
-				.setExpiration(new Date(System.currentTimeMillis() + prop.getExpirationTime()))
-				.signWith(SignatureAlgorithm.HS256, prop.getSecret().getBytes())
+				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(SignatureAlgorithm.HS256, SECRET.getBytes())
 				.compact();
-		res.addHeader(prop.getHeaderString(), prop.getTokenPrefix() + token);
+		res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 	}
 }
