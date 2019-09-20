@@ -1,4 +1,4 @@
-package com.example.userAuthAPI.domain;
+package com.example.userAuthAPI.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -1,6 +1,6 @@
 package com.example.userAuthAPI.service;
 
-import com.example.userAuthAPI.domain.UserObject;
+import com.example.userAuthAPI.model.UserObject;
 import com.example.userAuthAPI.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,6 @@ public class UserService implements UserDetailsService {
 		UserObject user = null;
 		try {
 			user = this.findByName(username);
-			user.encrypt(passwordEncoder());
 		} catch (Exception e) {
 			throw new UsernameNotFoundException(username);
 		}

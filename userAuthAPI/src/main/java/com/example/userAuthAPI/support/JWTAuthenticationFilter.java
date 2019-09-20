@@ -1,6 +1,7 @@
 package com.example.userAuthAPI.support;
 
-import com.example.userAuthAPI.domain.UserObject;
+import com.example.userAuthAPI.model.UserObject;
+import com.example.userAuthAPI.config.SecurityConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -22,10 +23,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.userAuthAPI.support.SecurityConstants.*;
+import static com.example.userAuthAPI.config.Mappings.LOGIN_URL;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+	private SecurityConstants prop;
+	
 	private AuthenticationManager authenticationManager;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
@@ -35,8 +38,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(LOGIN_URL, "POST"));
 		
-		setUsernameParameter(LOGIN_ID);
-		setPasswordParameter(PASSWORD);
+		setUsernameParameter("user");
+		setPasswordParameter("password");
+		setFilterProcessesUrl(LOGIN_URL);
 	}
 	
 	@Override
@@ -45,8 +49,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		try {
 			UserObject userObject = new ObjectMapper().readValue(req.getInputStream(), UserObject.class);
-			System.out.println(userObject.getName());
-			System.out.println(userObject.getPassword());
 			
 			return this.authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(
@@ -65,12 +67,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 											HttpServletResponse res,
 											FilterChain chain,
 											Authentication auth) throws IOException, ServletException {
-		System.out.println("success");
 		String token = Jwts.builder()
 				.setSubject(((User)auth.getPrincipal()).getUsername())
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-				.signWith(SignatureAlgorithm.HS256, SECRET.getBytes())
+				.setExpiration(new Date(System.currentTimeMillis() + prop.getExpirationTime()))
+				.signWith(SignatureAlgorithm.HS256, prop.getSecret().getBytes())
 				.compact();
-		res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+		res.addHeader(prop.getHeaderString(), prop.getTokenPrefix() + token);
 	}
 }

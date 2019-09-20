@@ -1,5 +1,6 @@
-package com.example.userAuthAPI;
+package com.example.userAuthAPI.config;
 
+import com.example.userAuthAPI.config.SecurityConstants;
 import com.example.userAuthAPI.support.JWTAuthenticationFilter;
 import com.example.userAuthAPI.support.JWTAuthorizationFilter;
 
@@ -14,7 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import static com.example.userAuthAPI.support.SecurityConstants.*;
+import static com.example.userAuthAPI.config.Mappings.*;
 
 @Configuration
 @EnableWebSecurity
@@ -25,13 +26,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManager(), bCryptPasswordEncoder());
+		filter.setFilterProcessesUrl(LOGIN_URL);
+
 		http.cors()
 			.and().authorizeRequests()
 			.antMatchers("/public", SIGNUP_URL, LOGIN_URL).permitAll()
 			.anyRequest().authenticated()
 			.and().logout()
 			.and().csrf().disable()
-			.addFilter(new JWTAuthenticationFilter(authenticationManager(), bCryptPasswordEncoder()))
+			.addFilter(filter)
 			.addFilter(new JWTAuthorizationFilter(authenticationManager()))
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
