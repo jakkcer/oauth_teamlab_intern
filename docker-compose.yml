@@ -1,0 +1,30 @@
+version: '3'
+services:
+
+  dbserver:
+    image: mysql
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - mysql-db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: user_auth_db
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testuser
+      MYSQL_ROOT_PASSWORD: root
+
+  api:
+    build: ./api
+    image: user-auth-api
+    depends_on:
+      - dbserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./api:/api
+    environment:
+      JAR_TARGET: userAuthAPI-0.0.1-SNAPSHOT.jar
+
+volumes:
+  mysql-db:
+    driver: local
+
