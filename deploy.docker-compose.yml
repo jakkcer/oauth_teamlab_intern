@@ -13,10 +13,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
 
   api:
-    build:
-      context: ./api
-      dockerfile: deploy.Dockerfile
-    image: user-auth-api
+    image: 057663277679.dkr.ecr.ap-northeast-1.amazonaws.com/nitta-authapi:latest
     depends_on:
       - dbserver
     ports:
