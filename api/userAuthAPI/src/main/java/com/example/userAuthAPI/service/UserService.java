@@ -36,6 +36,10 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByNameEquals(name);
 	}
 	
+	public UserObject findByEmail(String email) {
+		return userRepository.findByEmailEquals(email);
+	}
+
 	public UserObject create(UserObject user) {
 		return userRepository.save(user);
 	}
@@ -53,15 +57,15 @@ public class UserService implements UserDetailsService {
 	}
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		UserObject user = null;
 		try {
-			user = this.findByName(username);
+			user = this.findByEmail(email);
 		} catch (Exception e) {
-			throw new UsernameNotFoundException(username);
+			throw new UsernameNotFoundException(email);
 		}
 		
-		return User.withUsername(username)
+		return User.withUsername(email)
 				.password(user.getPassword())
 				.authorities("ROLE_USER")
 				.build();

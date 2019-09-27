@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name="users")
 public class UserObject {
 
 	@Id
@@ -25,13 +25,13 @@ public class UserObject {
 	@Column
 	private long id;
 	
-	@Column(nullable = false)
+	@Column(nullable=false)
 	private String name;
 	
-	@Column(nullable = false)
+	@Column(nullable=false, unique=true)
 	private String email;
 	
-	@Column(nullable = false)
+	@Column(nullable=false)
 	private String password;
 	
 	public void encrypt(PasswordEncoder encoder) {

@@ -36,9 +36,9 @@ public class UserController {
 	public UserObject getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
-		String username = (String) (authentication.getPrincipal());
+		String email = (String) (authentication.getPrincipal());
 		
-		return userService.findByName(username);
+		return userService.findByEmail(email);
 	}
 
 	@PostMapping(SIGNUP_URL)
